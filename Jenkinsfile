@@ -1,6 +1,6 @@
 pipeline {
     agent any 
-    
+
     stages { 
         stage('SCM Checkout') {
             steps {
@@ -9,29 +9,33 @@ pipeline {
                 }
             }
         }
+
         stage('Build Docker Image') {
             steps {  
                 sh "docker build -t adomicarts/nodeapp-cuban:${BUILD_NUMBER} ."
             }
         }
+
         stage('Login to Docker Hub') {
             steps {
-                withCredentials([string(credentialsId: 'samin-docker', variable: 'samindocker')]) {
-                    script {
-                        bat "docker login -u adomicarts -p %samindocker%"
-                    }
+                withCredentials([string(credentialsId: 'samin-docker', variable: 'DOCKER_PASSWORD')]) {
+                    sh '''
+                      echo $DOCKER_PASSWORD | docker login -u adomicarts --password-stdin
+                    '''
                 }
             }
         }
+
         stage('Push Image') {
             steps {
-                bat 'docker push adomicarts/nodeapp-cuban:%BUILD_NUMBER%'
+                sh "docker push adomicarts/nodeapp-cuban:${BUILD_NUMBER}"
             }
         }
     }
+
     post {
         always {
-            bat 'docker logout'
+            sh 'docker logout'
         }
     }
 }
