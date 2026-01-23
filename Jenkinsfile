@@ -14,7 +14,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh "docker build -t adomicarts/nodeapp-cuban:${BUILD_NUMBER} ."
+                sh "docker build -t gowrisuresh0109/nodeapp-cuban:${BUILD_NUMBER} ."
             }
         }
 
@@ -34,7 +34,7 @@ pipeline {
 
         stage('Push Image') {
             steps {
-                sh "docker push adomicarts/nodeapp-cuban:${BUILD_NUMBER}"
+                sh "docker push gowrisuresh0109/nodeapp-cuban:${BUILD_NUMBER}"
             }
         }
     }
