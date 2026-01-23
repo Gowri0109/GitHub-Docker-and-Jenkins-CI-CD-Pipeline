@@ -16,13 +16,17 @@ pipeline {
         }
         stage('Login to Docker Hub') {
             steps {
-                withCredentials([string(credentialsId: 'samin-docker', variable: 'samindocker')]) {
-                    script {  
-                        sh "docker login -u adomicarts -p '${samindocker}'"
-                    }
-                }
+                withCredentials([usernamePassword(
+                    credentialsId: 'samin-docker',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+        )]) {
+            sh '''
+              echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+            '''
             }
-        }
+         }
+    }
         stage('Push Image') {
             steps {
                 sh "docker push adomicarts/nodeapp-cuban:${BUILD_NUMBER}"
